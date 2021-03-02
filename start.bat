@@ -1,3 +1,3 @@
 @ECHO OFF
-python E:\Code\PortalRadio\main.py
+python "E:\Coding Shit\Code\PortalRadio\main.py"
 pause

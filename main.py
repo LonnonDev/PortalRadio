@@ -29,7 +29,7 @@ bot = commands.AutoShardedBot(case_insensitive=True, loop=None, shard_id=shardid
 
 # cogs
 try:
-	path = f'E:/Code/PortalRadio/cogs'
+	path = f'E:/Coding Shit/Code/PortalRadio/cogs'
 	cogs = []
 	for f in listdir(path):
 		file = f"cogs.{f}".replace('.py', '')

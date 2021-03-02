@@ -12,7 +12,7 @@ from uuid import uuid4
 import psutil
 from config import *
 import itertools
-os.chdir('E:/Code/PortalRadio/')
+os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 class MyHelpCommand(commands.DefaultHelpCommand):
 	async def send_bot_help(self, mapping):

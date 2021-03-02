@@ -12,7 +12,7 @@ import sqlite3
 from uuid import uuid4
 import psutil
 import itertools
-os.chdir('E:/Code/PortalRadio/')
+os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 # Useful Cog
 class Useful(commands.Cog, name="Useful Commands"):

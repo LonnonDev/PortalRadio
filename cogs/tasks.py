@@ -13,7 +13,7 @@ from uuid import uuid4
 import psutil
 import itertools
 from discord.ext import tasks, commands
-os.chdir('E:/Code/PortalRadio/')
+os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 
 class TasksCog(commands.Cog):

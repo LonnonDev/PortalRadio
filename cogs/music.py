@@ -18,7 +18,7 @@ from sympy import preview
 from sympy.solvers import solve
 import asyncio
 import ffmpeg
-os.chdir('E:/Code/PortalRadio/')
+os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 FFMPEG_OPTIONS = {
 	'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
@@ -38,7 +38,7 @@ class Music(commands.Cog, name="Music Commands"):
 		self.loopsong.cancel()
 
 	@commands.command()
-	async def play(self, ctx, voiceline: str):
+	async def play(self, ctx, *, voiceline: str):
 		voice_channel = ctx.author.voice.channel 
 		channel = voice_channel.name
 		guild = ctx.guild
@@ -48,16 +48,16 @@ class Music(commands.Cog, name="Music Commands"):
 			guild = ctx.guild
 			self.vc: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=guild)
 		self.song = voiceline
-		self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Code/PortalRadio/storage/{voiceline}"))
+		self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Coding Shit/Code/PortalRadio/storage/{voiceline}"))
 
 	@commands.command()
-	async def upload(self, ctx, customfilename: str=None):
+	async def upload(self, ctx, *, customfilename: str=None):
 		filename = ctx.message.attachments[0].filename
 		extension = f"{filename[-3]}{filename[-2]}{filename[-1]}"
 		if customfilename:
 			filename = str(customfilename) + "." + str(extension)
 		if extension == "ogg" or extension == "mp3" or extension == "mp4" or extension == "wav" or extension == "mov":
-			await ctx.message.attachments[0].save(f"E:/Code/PortalRadio/storage/{filename}")
+			await ctx.message.attachments[0].save(f"E:/Coding Shit/Code/PortalRadio/storage/{filename}")
 			await ctx.send("uploaded!")
 		else:
 			await ctx.send("That filetype is not supported!")
@@ -73,15 +73,15 @@ class Music(commands.Cog, name="Music Commands"):
 
 	@tasks.loop(seconds=1.0)
 	async def loopsong(self):
-		if self.song == None:
-			self.loopsong.cancel()
-		else:
+		try:
 			if self.vc.is_playing() is False:
-				self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Code/PortalRadio/storage/{self.song}"))
+				self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Coding Shit/Code/PortalRadio/storage/{self.song}"))
+		except:
+			pass
 
 	@commands.command()
 	async def storage(self, ctx):
-		files = [f for f in listdir("E:/Code/PortalRadio/storage") if isfile(join("E:/Code/PortalRadio/storage", f))]
+		files = [f for f in listdir("E:/Coding Shit/Code/PortalRadio/storage") if isfile(join("E:/Coding Shit/Code/PortalRadio/storage", f))]
 		per_page = 10 # 10 files per page
 		pages = math.ceil(len(files) / per_page)
 		cur_page = 1
