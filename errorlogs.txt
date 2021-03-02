@@ -1,2 +1,20 @@
 
-15:43:08 | console  discord.ext.commands.errors.CommandNotFound: Command "storation" is not found
+14:15:11 | console  Traceback (most recent call last):
+  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 85, in wrapped
+    ret = await coro(*args, **kwargs)
+  File "E:\Coding Shit\Code\PortalRadio\cogs\music.py", line 199, in status
+    await ctx.send(f"Loop: {self.enabledordisabled(self.loop)}\nPlayerCoin Feature: {self.enabledordisabled(self.playercoin)}\nQueue: {self.unpacklist(self.queue)}")
+  File "E:\Coding Shit\Code\PortalRadio\cogs\music.py", line 194, in unpacklist
+    unpacked =+ f"{x} "
+TypeError: bad operand type for unary +: 'str'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\bot.py", line 902, in invoke
+    await ctx.command.invoke(ctx)
+  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 864, in invoke
+    await injected(*ctx.args, **ctx.kwargs)
+  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 94, in wrapped
+    raise CommandInvokeError(exc) from exc
+discord.ext.commands.errors.CommandInvokeError: Command raised an exception: TypeError: bad operand type for unary +: 'str'

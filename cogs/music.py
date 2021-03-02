@@ -30,15 +30,32 @@ class Music(commands.Cog, name="Music Commands"):
 		self.bot = bot
 		self.loop = False
 		self.vc = None
+		self.shuffle = False
 		self.song = None
+		self.queue = []
 		self.guild = None
 		self.ruleschannel = None
+		self.playercoin = False
+		self.playing.start()
 
 	def cog_unload(self):
-		self.loopsong.cancel()
+		self.playing.cancel()
 
-	@commands.command()
-	async def play(self, ctx, *, voiceline: str):
+	@tasks.loop(seconds=1.0)
+	async def playing(self):
+		print('playing')
+		try:
+			print(self.vc.is_playing())
+			if self.vc.is_playing() is False:
+				self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Coding Shit/Code/PortalRadio/storage/{self.queue[0]}"))
+				try:
+					self.queue.remove(self.queue[0])
+				except:
+					pass
+		except:
+			pass
+
+	async def playmusic(self, ctx, voiceline):
 		voice_channel = ctx.author.voice.channel 
 		channel = voice_channel.name
 		guild = ctx.guild
@@ -48,7 +65,39 @@ class Music(commands.Cog, name="Music Commands"):
 			guild = ctx.guild
 			self.vc: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=guild)
 		self.song = voiceline
-		self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Coding Shit/Code/PortalRadio/storage/{voiceline}"))
+		self.queue += [voiceline]
+		await ctx.send(f"Added {self.queue[0]}")
+
+	@commands.command()
+	async def skip(self, ctx):
+		self.vc.stop()
+
+	@commands.command()
+	async def clearqueue(self, ctx):
+		self.queue = []
+
+
+	@commands.command()
+	@commands.is_owner()
+	async def playercoin(self, ctx):
+		if self.playercoin == False:
+			self.playercoin = True
+		else:
+			self.playercoin = False
+
+	@commands.command()
+	async def leave(self, ctx):
+		await self.vc.disconnect()
+
+	@commands.command()
+	async def play(self, ctx, voiceline: str, volume: float=1.0):
+		if self.playercoin == True:
+			if ctx.message.author.id == 600798393459146784:
+				await self.playmusic(ctx, voiceline)
+			else:
+				await ctx.send("You need 10 more playercoins to activate that feature")
+		else:
+			await self.playmusic(ctx, voiceline)
 
 	@commands.command()
 	async def upload(self, ctx, *, customfilename: str=None):
@@ -57,8 +106,11 @@ class Music(commands.Cog, name="Music Commands"):
 		if customfilename:
 			filename = str(customfilename) + "." + str(extension)
 		if extension == "ogg" or extension == "mp3" or extension == "mp4" or extension == "wav" or extension == "mov":
-			await ctx.message.attachments[0].save(f"E:/Coding Shit/Code/PortalRadio/storage/{filename}")
-			await ctx.send("uploaded!")
+			if "nigga" in filename.lower() or "nigger" in filename.lower():
+				await ctx.send("not good name")
+			else:
+				await ctx.message.attachments[0].save(f"E:/Coding Shit/Code/PortalRadio/storage/{filename}")
+				await ctx.send("uploaded!")
 		else:
 			await ctx.send("That filetype is not supported!")
 
@@ -66,18 +118,10 @@ class Music(commands.Cog, name="Music Commands"):
 	async def loop(self, ctx):
 		if self.loop == False:
 			self.loop = True
-			self.loopsong.start()
+			self.playing.start()
 		else:
 			self.loop = False
-			self.loopsong.stop()
-
-	@tasks.loop(seconds=1.0)
-	async def loopsong(self):
-		try:
-			if self.vc.is_playing() is False:
-				self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Coding Shit/Code/PortalRadio/storage/{self.song}"))
-		except:
-			pass
+			self.playing.stop()
 
 	@commands.command()
 	async def storage(self, ctx):
@@ -121,7 +165,7 @@ class Music(commands.Cog, name="Music Commands"):
 	@commands.command()
 	async def stop(self, ctx):
 		try:
-			self.loopsong.cancel()
+			self.playing.cancel()
 		except:
 			pass
 		try:
@@ -137,9 +181,21 @@ class Music(commands.Cog, name="Music Commands"):
 				vc: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=guild)
 			vc.stop()
 
+	def enabledordisabled(self, var):
+		if var == True:
+			return "Enabled"
+		else:
+			return "Disabled"
+
+	def unpacklist(self, unpackthis):
+		unpacked = ""
+		for x in unpackthis:
+			unpacked += f"{x}\n"
+		return unpacked
+
 	@commands.command()
 	async def status(self, ctx):
-		await ctx.send(f"Loop: {self.loop}")
+		await ctx.send(f"Loop: {self.enabledordisabled(self.loop)}\nPlayerCoin Feature: {self.enabledordisabled(self.playercoin)}\nQueue: ```{self.unpacklist(self.queue)}```")
 
 	@commands.Cog.listener()
 	async def on_message(self, ctx):
