@@ -6,6 +6,7 @@ import discord
 import os
 from os import listdir
 from os.path import isfile, join
+import os.path
 import sys
 import sqlite3
 import secrets
@@ -18,6 +19,7 @@ from sympy import preview
 from sympy.solvers import solve
 import asyncio
 import ffmpeg
+import youtube_dl
 os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 FFMPEG_OPTIONS = {
@@ -43,13 +45,15 @@ class Music(commands.Cog, name="Music Commands"):
 
 	@tasks.loop(seconds=1.0)
 	async def playing(self):
-		print('playing')
 		try:
-			print(self.vc.is_playing())
 			if self.vc.is_playing() is False:
 				self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Coding Shit/Code/PortalRadio/storage/{self.queue[0]}"))
 				try:
-					self.queue.remove(self.queue[0])
+					if self.loop == False:
+						self.queue.remove(self.queue[0])
+					elif self.loop == True:
+						self.queue += [self.queue[0]]
+						self.queue.remove(self.queue[0])
 				except:
 					pass
 		except:
@@ -64,9 +68,12 @@ class Music(commands.Cog, name="Music Commands"):
 		except:
 			guild = ctx.guild
 			self.vc: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=guild)
-		self.song = voiceline
-		self.queue += [voiceline]
-		await ctx.send(f"Added {self.queue[0]}")
+		if os.path.isfile(f"E:/Coding Shit/Code/PortalRadio/storage/{voiceline}"):
+			self.song = voiceline
+			self.queue += [voiceline]
+			await ctx.send(f"Added {voiceline}")
+		else:
+			await ctx.send("BRO ARE YOU RETARDED THAT DOESN'T EXIST!!!!")
 
 	@commands.command()
 	async def skip(self, ctx):
@@ -76,6 +83,18 @@ class Music(commands.Cog, name="Music Commands"):
 	async def clearqueue(self, ctx):
 		self.queue = []
 
+	@commands.command()
+	async def join(self, ctx):
+		voice_channel = ctx.author.voice.channel 
+		channel = voice_channel.name
+		vc = await voice_channel.connect()
+
+	@commands.command()
+	async def removesong(self, ctx, song: str):
+		try:
+			self.queue.remove(song)
+		except:
+			await ctx.send("not a song")
 
 	@commands.command()
 	@commands.is_owner()
@@ -118,10 +137,8 @@ class Music(commands.Cog, name="Music Commands"):
 	async def loop(self, ctx):
 		if self.loop == False:
 			self.loop = True
-			self.playing.start()
 		else:
 			self.loop = False
-			self.playing.stop()
 
 	@commands.command()
 	async def storage(self, ctx):
@@ -131,7 +148,7 @@ class Music(commands.Cog, name="Music Commands"):
 		cur_page = 1
 		chunk = files[:per_page]
 		linebreak = "\n"
-		message = await ctx.send(f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+		message = await ctx.send(f"Page {cur_page}/{pages}:\n```{linebreak.join(chunk)}```")
 		await message.add_reaction("◀️")
 		await message.add_reaction("▶️")
 		active = True
@@ -150,13 +167,13 @@ class Music(commands.Cog, name="Music Commands"):
 						chunk = files[(cur_page-1)*per_page:cur_page*per_page]
 					else:
 						chunk = files[(cur_page-1)*per_page:]
-					await message.edit(content=f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+					await message.edit(content=f"Page {cur_page}/{pages}:\n```{linebreak.join(chunk)}```")
 					await message.remove_reaction(reaction, user)
 
 				elif str(reaction.emoji) == "◀️" and cur_page > 1:
 					cur_page -= 1
 					chunk = files[(cur_page-1)*per_page:cur_page*per_page]
-					await message.edit(content=f"Page {cur_page}/{pages}:\n{linebreak.join(chunk)}")
+					await message.edit(content=f"Page {cur_page}/{pages}:\n```{linebreak.join(chunk)}```")
 					await message.remove_reaction(reaction, user)
 			except asyncio.TimeoutError:
 				await message.delete()
@@ -195,7 +212,7 @@ class Music(commands.Cog, name="Music Commands"):
 
 	@commands.command()
 	async def status(self, ctx):
-		await ctx.send(f"Loop: {self.enabledordisabled(self.loop)}\nPlayerCoin Feature: {self.enabledordisabled(self.playercoin)}\nQueue: ```{self.unpacklist(self.queue)}```")
+		await ctx.send(f"Loop: {self.enabledordisabled(self.loop)}\nPlayerCoin Feature: {self.enabledordisabled(self.playercoin)}\nQueue: ```Songs:\n{self.unpacklist(self.queue)}```")
 
 	@commands.Cog.listener()
 	async def on_message(self, ctx):

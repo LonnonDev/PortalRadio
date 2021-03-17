@@ -16,6 +16,16 @@ import asyncio
 # import the token
 from config import *
 
+conn = sqlite3.connect("people.db")
+c = conn.cursor()
+
+c.execute("""CREATE TABLE IF NOT EXISTS people (
+			id blob,
+			coin real,
+			bank real
+			)""")
+conn.commit()
+
 # shard id
 shardids = 1
 # shard count

