@@ -16,7 +16,12 @@ from sympy.solvers import solve
 import asyncio
 from discord.ext import tasks, commands
 from discord.ext.commands.cooldowns import BucketType
-os.chdir('E:/Coding Shit/Code/PortalRadio/')
+try:
+	source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
+	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
+except:
+	source = 'E:/Coding Shit/Code/PortalRadio/'
+	os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 conn = sqlite3.connect("people.db")
 c = conn.cursor()

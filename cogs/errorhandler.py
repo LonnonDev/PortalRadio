@@ -12,7 +12,12 @@ import sqlite3
 from uuid import uuid4
 import psutil
 import itertools
-os.chdir('E:/Coding Shit/Code/PortalRadio/')
+try:
+	source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
+	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
+except:
+	source = 'E:/Coding Shit/Code/PortalRadio/'
+	os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 class CommandErrorHandler(commands.Cog, name="ErrorHandler"):
 	def __init__(self, bot):
@@ -381,9 +386,19 @@ class CommandErrorHandler(commands.Cog, name="ErrorHandler"):
 		log(ctx, error)
 
 def log(ctx, logtext):
-	os.chdir('E:/Coding Shit/Code/PortalRadio//')
+	try:
+		source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
+		os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
+	except:
+		source = 'E:/Coding Shit/Code/PortalRadio/'
+		os.chdir('E:/Coding Shit/Code/PortalRadio/')
 	errorlog = open("errorlogs.txt", 'w', encoding='utf-8')
-	os.chdir('E:/Coding Shit/Code/PortalRadio/')
+	try:
+		source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
+		os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
+	except:
+		source = 'E:/Coding Shit/Code/PortalRadio/'
+		os.chdir('E:/Coding Shit/Code/PortalRadio/')
 	now = datetime.now()
 	ct = now.strftime("%H:%M:%S")
 	if ctx.author == 'console':

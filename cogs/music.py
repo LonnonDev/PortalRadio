@@ -20,7 +20,12 @@ from sympy.solvers import solve
 import asyncio
 import ffmpeg
 import youtube_dl
-os.chdir('E:/Coding Shit/Code/PortalRadio/')
+try:
+	source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
+	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
+except:
+	source = 'E:/Coding Shit/Code/PortalRadio/'
+	os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 FFMPEG_OPTIONS = {
 	'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
@@ -47,7 +52,7 @@ class Music(commands.Cog, name="Music Commands"):
 	async def playing(self):
 		try:
 			if self.vc.is_playing() is False:
-				self.vc.play(discord.FFmpegPCMAudio(source=f"E:/Coding Shit/Code/PortalRadio/storage/{self.queue[0]}"))
+				self.vc.play(discord.FFmpegPCMAudio(source=f"{source}/storage/{self.queue[0]}"))
 				try:
 					if self.loop == False:
 						self.queue.remove(self.queue[0])
@@ -68,7 +73,7 @@ class Music(commands.Cog, name="Music Commands"):
 		except:
 			guild = ctx.guild
 			self.vc: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=guild)
-		if os.path.isfile(f"E:/Coding Shit/Code/PortalRadio/storage/{voiceline}"):
+		if os.path.isfile(f"{source}/storage/{voiceline}"):
 			self.song = voiceline
 			self.queue += [voiceline]
 			await ctx.send(f"Added {voiceline}")
@@ -128,7 +133,7 @@ class Music(commands.Cog, name="Music Commands"):
 			if "nigga" in filename.lower() or "nigger" in filename.lower():
 				await ctx.send("not good name")
 			else:
-				await ctx.message.attachments[0].save(f"E:/Coding Shit/Code/PortalRadio/storage/{filename}")
+				await ctx.message.attachments[0].save(f"{source}/storage/{filename}")
 				await ctx.send("uploaded!")
 		else:
 			await ctx.send("That filetype is not supported!")
@@ -142,7 +147,7 @@ class Music(commands.Cog, name="Music Commands"):
 
 	@commands.command()
 	async def storage(self, ctx):
-		files = [f for f in listdir("E:/Coding Shit/Code/PortalRadio/storage") if isfile(join("E:/Coding Shit/Code/PortalRadio/storage", f))]
+		files = [f for f in listdir(f"{source}/storage") if isfile(join(f"{source}/storage", f))]
 		per_page = 10 # 10 files per page
 		pages = math.ceil(len(files) / per_page)
 		cur_page = 1

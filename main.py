@@ -6,7 +6,7 @@ import discord
 import os
 import sys
 import sqlite3
-import secret
+import secrets
 import discord
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
@@ -15,6 +15,13 @@ import datetime
 import asyncio
 # import the token
 from config import *
+
+try:
+	source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
+	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
+except:
+	source = 'E:/Coding Shit/Code/PortalRadio/'
+	os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 conn = sqlite3.connect("people.db")
 c = conn.cursor()
@@ -39,7 +46,7 @@ bot = commands.AutoShardedBot(case_insensitive=True, loop=None, shard_id=shardid
 
 # cogs
 try:
-	path = f'E:/Coding Shit/Code/PortalRadio/cogs'
+	path = f'{source}/cogs'
 	cogs = []
 	for f in listdir(path):
 		file = f"cogs.{f}".replace('.py', '')

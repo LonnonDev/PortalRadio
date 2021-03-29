@@ -12,8 +12,12 @@ import sqlite3
 from uuid import uuid4
 import psutil
 import itertools
+import subprocess
 from discord.utils import get
-os.chdir('E:/Coding Shit/Code/PortalRadio/')
+try:
+	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
+except:
+	os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
 # Useful Cog
 class Useful(commands.Cog, name="Useful Commands"):
@@ -79,7 +83,7 @@ class Useful(commands.Cog, name="Useful Commands"):
 			self.bot.reload_extension(extension)
 		await ctx.send(f"Reloaded {cog}.py")
 
-	@commands.command()
+	"""@commands.command()
 	@commands.is_owner()
 	async def test(self, ctx, name: str):
 		await ctx.message.delete()
@@ -101,7 +105,14 @@ class Useful(commands.Cog, name="Useful Commands"):
 	async def test3(self, ctx, name: str):
 		await ctx.message.delete()
 		role = get(ctx.guild.roles, name=name)
-		await role.delete()
+		await role.delete()"""
+
+	@commands.command()
+	@commands.is_owner()
+	async def startserver(self, ctx):
+		output = subprocess.run(['python', '-V'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+		await ctx.send(output)
+
 
 
 # setup the Cog
