@@ -23,13 +23,18 @@ except:
 	source = 'E:/Coding Shit/Code/PortalRadio/'
 	os.chdir('E:/Coding Shit/Code/PortalRadio/')
 
-conn = sqlite3.connect("people.db")
+conn = sqlite3.connect("Database/people.db")
 c = conn.cursor()
 
 c.execute("""CREATE TABLE IF NOT EXISTS people (
 			id blob,
 			coin real,
 			bank real
+			)""")
+conn.commit()
+c.execute("""CREATE TABLE IF NOT EXISTS style (
+			id blob,
+			style blob
 			)""")
 conn.commit()
 
