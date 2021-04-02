@@ -97,6 +97,12 @@ class Economy(commands.Cog, name="Economy Commands"):
 		bank = int(round(fetch[2], 2))
 		return pocket, bank
 
+	def removemoney(self, person, lost):
+		pocket, bank = self.fetchbalance(person)
+		newbalance = pocket - lost
+		c.execute("UPDATE people SET coin=? WHERE id=?", (newbalance, person))
+		conn.commit()
+
 	@commands.command()
 	async def reset(self, ctx):
 		person = None
