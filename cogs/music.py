@@ -114,7 +114,7 @@ class Music(commands.Cog, name="Music Commands"):
 		await self.vc.disconnect()
 
 	@commands.command()
-	async def play(self, ctx, voiceline: str, volume: float=1.0):
+	async def play(self, ctx, voiceline: str):
 		if self.playercoin == True:
 			if ctx.message.author.id == 600798393459146784:
 				await self.playmusic(ctx, voiceline)
@@ -125,14 +125,19 @@ class Music(commands.Cog, name="Music Commands"):
 
 	@commands.command()
 	async def upload(self, ctx, *, customfilename: str=None):
+		customfilename = customfilename.replace(".mp4", "").replace(".mp3", "").replace(".ogg", "").replace(".wav", "").replace(".mov", "")
 		filename = ctx.message.attachments[0].filename
 		extension = f"{filename[-3]}{filename[-2]}{filename[-1]}"
 		if customfilename:
 			filename = str(customfilename) + "." + str(extension)
 		if extension == "ogg" or extension == "mp3" or extension == "mp4" or extension == "wav" or extension == "mov":
-			if "nigga" in filename.lower() or "nigger" in filename.lower():
+			if "nigga" in filename.lower() or "nigger" in filename.lower() or len(customfilename) > 25 and len(filename) > 25:
 				await ctx.send("not good name")
 			else:
+				filename = filename.replace("../", "")
+				filename = filename.replace("..\\", "")
+				filename = filename.replace("/", "")
+				filename = filename.replace("\\", "")
 				await ctx.message.attachments[0].save(f"{source}/storage/{filename}")
 				await ctx.send("uploaded!")
 		else:

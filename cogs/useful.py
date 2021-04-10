@@ -1,35 +1,51 @@
 import traceback
 import sys
 from discord.ext import commands
+from discord.ext.commands.cooldowns import BucketType
 import discord
 import time
 import json
 import random
 import os
 import asyncio
-from datetime import datetime
+import datetime
 import sqlite3
+import math
 from uuid import uuid4
 import psutil
+from fractions import Fraction
 import itertools
 import subprocess
 from discord.utils import get
 try:
+	source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
 	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
 except:
+	source = 'E:/Coding Shit/Code/PortalRadio/'
 	os.chdir('E:/Coding Shit/Code/PortalRadio/')
-
 # Useful Cog
 class Useful(commands.Cog, name="Useful Commands"):
 	def __init__(self, bot):
 		self.bot = bot
 
-	@commands.command(alisaes=["tr"])
+	def truncate(self, number, decimals=2):
+		return round(number*100) / 100
+
+	@commands.command(aliases=["tr"])
+	@commands.cooldown(1, 10, commands.BucketType.user)
 	async def transrights(self, ctx):
-		counter = 0
-		while counter != 10:
-			counter += 1
-			await ctx.send(":transgender_flag:")
+		myfinalmessage = f"{ctx.author.mention} "
+		numberoftrans = 0
+		while(True):
+			myfinalmessage += ":transgender_flag:"
+			numberoftrans += 1
+			if(random.randint(1,5) == 1):
+				s = 0.8
+				n = numberoftrans
+				ans = self.truncate((s**(n-1) - s**(n))*100)
+				frac = Fraction(round((s**(n-1) - s**(n))*10000)/10000).limit_denominator()
+				await ctx.send(f"{myfinalmessage} {numberoftrans} Flag(s)!\n {ans}% ({frac}) chance of happening")
+				break
 
 	@commands.command(aliases=['ping', 'uptime'])
 	async def info(self, ctx):
@@ -38,7 +54,7 @@ class Useful(commands.Cog, name="Useful Commands"):
 		datetimeformat = "%d Day(s), %H Hour(s), %M Minute(s), %S Second(s)"
 		x = datetime.datetime.now()
 		x = str(x.strftime("%d Day(s), %H Hour(s), %M Minute(s), %S Second(s)"))
-		f = open("E:/Code/EcoIsCringe/storage/started.txt", 'r')
+		f = open(f"{source}/started.txt", 'r')
 		time = f.read()
 		f.close()
 		diff = datetime.datetime.strptime(x, datetimeformat) - datetime.datetime.strptime(time, datetimeformat)

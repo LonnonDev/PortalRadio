@@ -1,2 +1,2 @@
 
-11:56:49 | console  discord.ext.commands.errors.CommandNotFound: Command "niggers" is not found
+03:27:15 | console  discord.ext.commands.errors.CommandNotFound: Command "fetchitem" is not found

@@ -8,6 +8,7 @@ import sys
 import sqlite3
 import secrets
 import discord
+import datetime
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 from os import listdir
@@ -37,13 +38,19 @@ c.execute("""CREATE TABLE IF NOT EXISTS style (
 			style blob
 			)""")
 conn.commit()
+c.execute("""CREATE TABLE IF NOT EXISTS items (
+			id blob,
+			items blob
+			)""")
+conn.commit()
+
 
 # shard id
 shardids = 1
 # shard count
 shardcount = 1
 # command prefix
-commandprefix = ["p!"]
+commandprefix = ["p!","P!"]
 
 intents = discord.Intents.all()
 
@@ -65,6 +72,11 @@ except:
 for extension in cogs:
 	bot.load_extension(extension)
 
+x = datetime.datetime.now()
+now = str(x.strftime("%d Day(s), %H Hour(s), %M Minute(s), %S Second(s)"))
+f = open(f"{source}/started.txt", 'w')
+f.write(now)
+f.close()
 # run the bot
 print("Running...")
 bot.run(config)

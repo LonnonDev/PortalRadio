@@ -103,6 +103,18 @@ class Economy(commands.Cog, name="Economy Commands"):
 		c.execute("UPDATE people SET coin=? WHERE id=?", (newbalance, person))
 		conn.commit()
 
+	def fetchitem(self, item, linestoread):
+		file = open(f"Database/items/{item}.item", "r")
+		linestoread = linestoread - 1
+		for position, line in enumerate(file):
+			if position == linestoread:
+				return format(line)
+
+	def formatitem(self, item):
+		itemformatted = f"```ID: {item}\nCost: {self.fetchitem(item, 1)}```"
+		return format(itemformatted)
+
+
 	@commands.command()
 	async def reset(self, ctx):
 		person = None
@@ -147,7 +159,48 @@ class Economy(commands.Cog, name="Economy Commands"):
 		c.execute("UPDATE people SET coin=? WHERE id=?", (paycheck, person))
 		conn.commit()
 
+	@commands.command()
+	async def buy(self, ctx, item: str):
+		pocket, bank = self.fetchbalance(person)
 
+	@commands.command()
+	async def items(self, ctx):
+		files = [f"Big Chungus Coin: {self.formatitem('bigchungus')}", f"Gaming: {self.formatitem('gaming')}"]
+		per_page = 3 # 10 files per page
+		pages = math.ceil(len(files) / per_page)
+		cur_page = 1
+		chunk = files[:per_page]
+		linebreak = ""
+		message = await ctx.send(f"Page {cur_page}/{pages}:\n>>> {linebreak.join(chunk)}")
+		await message.add_reaction("◀️")
+		await message.add_reaction("▶️")
+		active = True
+
+		def check(reaction, user):
+			return user == ctx.author and str(reaction.emoji) in ["◀️", "▶️"]
+						 # or you can use unicodes, respectively: "\u25c0" or "\u25b6"
+
+		while active:
+			try:
+				reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
+			
+				if str(reaction.emoji) == "▶️" and cur_page != pages:
+					cur_page += 1
+					if cur_page != pages:
+						chunk = files[(cur_page-1)*per_page:cur_page*per_page]
+					else:
+						chunk = files[(cur_page-1)*per_page:]
+					await message.edit(content=f"Page {cur_page}/{pages}:\n```{linebreak.join(chunk)}```")
+					await message.remove_reaction(reaction, user)
+
+				elif str(reaction.emoji) == "◀️" and cur_page > 1:
+					cur_page -= 1
+					chunk = files[(cur_page-1)*per_page:cur_page*per_page]
+					await message.edit(content=f"Page {cur_page}/{pages}:\n```{linebreak.join(chunk)}```")
+					await message.remove_reaction(reaction, user)
+			except asyncio.TimeoutError:
+				await message.delete()
+				active = False
 
 def setup(bot):
 	print("Economy Commands Loaded...")
