@@ -224,23 +224,6 @@ class Music(commands.Cog, name="Music Commands"):
 	async def status(self, ctx):
 		await ctx.send(f"Loop: {self.enabledordisabled(self.loop)}\nPlayerCoin Feature: {self.enabledordisabled(self.playercoin)}\nQueue: ```Songs:\n{self.unpacklist(self.queue)}```")
 
-	@commands.Cog.listener()
-	async def on_message(self, ctx):
-		if ctx.channel.id == 809997824585367592:
-			guild = self.bot.get_guild(785241980162408450)
-			ruleschannel = guild.get_channel(809997824585367592)
-			lastmessages = await ruleschannel.history(limit=2).flatten()
-			message = [lastmessages[1].content, lastmessages[0].content]
-			rule1 = message[0].split(" ")
-			oldrulenumber = rule1[1]
-			newrulenumber = int(oldrulenumber.replace(":", "")) + 1
-			if ctx.content.lower().startswith(f"rule {newrulenumber}: "):
-				pass
-			else:
-				await ctx.delete()
-		else:
-			pass
-
 def setup(bot):
 	print("Music Commands Loaded...")
 	bot.add_cog(Music(bot))

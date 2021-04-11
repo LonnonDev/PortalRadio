@@ -16,6 +16,8 @@ from sympy.solvers import solve
 import asyncio
 from discord.ext import tasks, commands
 from discord.ext.commands.cooldowns import BucketType
+from fractions import Fraction
+
 try:
 	source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
 	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
@@ -41,6 +43,7 @@ class Economy(commands.Cog, name="Economy Commands"):
 			member = str(person)
 			membername = str(person)
 			person = str(person.id)
+		self.personhandler(person)
 		return personog, member, membername, person
 
 	def personhandler(self, person):
@@ -53,6 +56,11 @@ class Economy(commands.Cog, name="Economy Commands"):
 		conn.commit()
 		if c.fetchone() == None:
 			c.execute("INSERT INTO style (id, style) VALUES (?, \"blue\")", (person,))
+			conn.commit()
+		c.execute("SELECT * FROM items WHERE id=?", (person,))
+		conn.commit()
+		if c.fetchone() == None:
+			c.execute("INSERT INTO items (id, items) VALUES (?, \"[]\")", (person,))
 			conn.commit()
 
 	def emojistype(self, person):
@@ -114,6 +122,14 @@ class Economy(commands.Cog, name="Economy Commands"):
 		itemformatted = f"```ID: {item}\nCost: {self.fetchitem(item, 1)}```"
 		return format(itemformatted)
 
+	def fetchitems(self, person):
+		c.execute("SELECT * FROM items WHERE id=?", (person,))
+		conn.commit()
+		fetchall = c.fetchall()
+		fetch = fetchall[0]
+		items = fetch[1]
+		items = items.strip('][').split(', ')
+		return items
 
 	@commands.command()
 	async def reset(self, ctx):
@@ -122,7 +138,7 @@ class Economy(commands.Cog, name="Economy Commands"):
 		await ctx.send(person)
 		self.reset(person)
 
-	@commands.command()
+	@commands.command(aliases=["bal"])
 	async def balance(self, ctx, person: discord.Member = None):
 		color = random.randint(0, 0xFFFFFF)
 		personog, member, membername, person = self.getperson(ctx, person)
@@ -141,7 +157,6 @@ class Economy(commands.Cog, name="Economy Commands"):
 	async def shootportalgun(self, ctx):
 		color = random.randint(0, 0xFFFFFF)
 		personog, member, membername, person = self.getperson(ctx)
-		self.personhandler(person)
 		pocket, bank = self.fetchbalance(person)
 		amount = 1
 		paycheck = amount + pocket
@@ -161,7 +176,17 @@ class Economy(commands.Cog, name="Economy Commands"):
 
 	@commands.command()
 	async def buy(self, ctx, item: str):
+		personog, member, membername, person = self.getperson(ctx)
 		pocket, bank = self.fetchbalance(person)
+		items = self.fetchitems(person)
+		if int(pocket) >= int(self.fetchitem(item, 1)):
+			paycheck = pocket - int(self.fetchitem(item, 1))
+			c.execute("UPDATE people SET coin=? WHERE id=?", (paycheck, person))
+			conn.commit()
+			items += [item]
+			c.execute("UPDATE items SET items=? WHERE id=?", (str(items), person))
+			conn.commit()
+			await ctx.send("worked")
 
 	@commands.command()
 	async def items(self, ctx):
@@ -201,6 +226,71 @@ class Economy(commands.Cog, name="Economy Commands"):
 			except asyncio.TimeoutError:
 				await message.delete()
 				active = False
+
+	@commands.command(aliases=["inv"])
+	async def inventory(self, ctx):
+		personog, member, membername, person = self.getperson(ctx)
+		files = self.fetchitems(person)
+		per_page = 10 # 10 files per page
+		pages = math.ceil(len(files) / per_page)
+		cur_page = 1
+		chunk = files[:per_page]
+		linebreak = "\n"
+		message = await ctx.send(f"Page {cur_page}/{pages}:\n>>> ```{linebreak.join(chunk)}```")
+		await message.add_reaction("◀️")
+		await message.add_reaction("▶️")
+		active = True
+
+		def check(reaction, user):
+			return user == ctx.author and str(reaction.emoji) in ["◀️", "▶️"]
+						 # or you can use unicodes, respectively: "\u25c0" or "\u25b6"
+
+		while active:
+			try:
+				reaction, user = await self.bot.wait_for("reaction_add", timeout=60, check=check)
+			
+				if str(reaction.emoji) == "▶️" and cur_page != pages:
+					cur_page += 1
+					if cur_page != pages:
+						chunk = files[(cur_page-1)*per_page:cur_page*per_page]
+					else:
+						chunk = files[(cur_page-1)*per_page:]
+					await message.edit(content=f"Page {cur_page}/{pages}:\n```{linebreak.join(chunk)}```")
+					await message.remove_reaction(reaction, user)
+
+				elif str(reaction.emoji) == "◀️" and cur_page > 1:
+					cur_page -= 1
+					chunk = files[(cur_page-1)*per_page:cur_page*per_page]
+					await message.edit(content=f"Page {cur_page}/{pages}:\n```{linebreak.join(chunk)}```")
+					await message.remove_reaction(reaction, user)
+			except asyncio.TimeoutError:
+				await message.delete()
+				active = False
+
+	def truncate(self, number, decimals=2):
+		return round(number*100) / 100
+
+	@commands.command(aliases=["tr"])
+	@commands.cooldown(1, 10, commands.BucketType.user)
+	async def transrights(self, ctx, person: discord.Member = None, bet: int = 0):
+		if person == None and bet == 0:
+			myfinalmessage = f"{ctx.author.mention} "
+			numberoftrans = 0
+			while(True):
+				myfinalmessage += ":transgender_flag:"
+				numberoftrans += 1
+				if(random.randint(1,5) == 1):
+					s = 0.8
+					n = numberoftrans
+					ans = self.truncate((s**(n-1) - s**(n))*100)
+					frac = Fraction(round((s**(n-1) - s**(n))*10000)/10000).limit_denominator()
+					await ctx.send(f"{myfinalmessage} {numberoftrans} Flag(s)!\n {ans}% ({frac}) chance of happening")
+					break
+		elif person != None and bet == 0:
+			errortype = 'MissingRequiredArgument'
+			embed=discord.Embed(title=f"Error MissingRequiredArgument", color=color)
+			embed.add_field(name="-", value=f"```\nBet is a required argument that is missing.\n```", inline=False)
+			await ctx.send(embed=embed, delete_after=30)
 
 def setup(bot):
 	print("Economy Commands Loaded...")

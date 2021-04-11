@@ -17,6 +17,7 @@ from fractions import Fraction
 import itertools
 import subprocess
 from discord.utils import get
+
 try:
 	source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
 	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
@@ -28,24 +29,9 @@ class Useful(commands.Cog, name="Useful Commands"):
 	def __init__(self, bot):
 		self.bot = bot
 
-	def truncate(self, number, decimals=2):
-		return round(number*100) / 100
-
-	@commands.command(aliases=["tr"])
-	@commands.cooldown(1, 10, commands.BucketType.user)
-	async def transrights(self, ctx):
-		myfinalmessage = f"{ctx.author.mention} "
-		numberoftrans = 0
-		while(True):
-			myfinalmessage += ":transgender_flag:"
-			numberoftrans += 1
-			if(random.randint(1,5) == 1):
-				s = 0.8
-				n = numberoftrans
-				ans = self.truncate((s**(n-1) - s**(n))*100)
-				frac = Fraction(round((s**(n-1) - s**(n))*10000)/10000).limit_denominator()
-				await ctx.send(f"{myfinalmessage} {numberoftrans} Flag(s)!\n {ans}% ({frac}) chance of happening")
-				break
+	@commands.command()
+	async def id(self, ctx):
+		await ctx.send(ctx.channel.id)
 
 	@commands.command(aliases=['ping', 'uptime'])
 	async def info(self, ctx):

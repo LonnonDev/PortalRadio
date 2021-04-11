@@ -1,2 +1,2 @@
 
-05:02:48 | console  discord.ext.commands.errors.CommandNotFound: Command "playrandom" is not found
+15:37:36 | console  discord.ext.commands.errors.CommandNotFound: Command "p!reload" is not found

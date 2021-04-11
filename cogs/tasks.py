@@ -44,10 +44,50 @@ class TasksCog(commands.Cog):
 		guild = self.bot.get_guild(785241980162408450)
 		david = guild.get_member(348559658232971265)
 		sunnyd = guild.get_member(751466125631422537)
-		if david.nick != "TransLover":
-			await david.edit(nick="TransLover")
-		if sunnyd.nick != self.sunnydnick:
-			await sunnyd.edit(nick=self.sunnydnick)
+		try:
+			if david.nick != "TransLover":
+				await david.edit(nick="TransLover")
+		except:
+			pass
+		try:
+			if sunnyd.nick != self.sunnydnick:
+				await sunnyd.edit(nick=self.sunnydnick)
+		except:
+			pass
+
+	@commands.Cog.listener()
+	async def on_message(self, ctx):
+		if ctx.channel.id == 809997824585367592:
+			guild = self.bot.get_guild(785241980162408450)
+			ruleschannel = guild.get_channel(809997824585367592)
+			lastmessages = await ruleschannel.history(limit=2).flatten()
+			message = [lastmessages[1].content, lastmessages[0].content]
+			rule1 = message[0].split(" ")
+			oldrulenumber = rule1[1]
+			newrulenumber = int(oldrulenumber.replace(":", "")) + 1
+			if ctx.content.lower().startswith(f"rule {newrulenumber}: "):
+				pass
+			else:
+				await ctx.delete()
+		else:
+			pass
+
+	@commands.Cog.listener()
+	async def on_message_edit(self, before, after):
+		if after.channel.id == 809997824585367592:
+			guild = self.bot.get_guild(785241980162408450)
+			ruleschannel = guild.get_channel(809997824585367592)
+			lastmessages = await ruleschannel.history(limit=2).flatten()
+			message = [lastmessages[1].content, lastmessages[0].content]
+			rule1 = message[0].split(" ")
+			oldrulenumber = rule1[1]
+			newrulenumber = int(oldrulenumber.replace(":", "")) + 1
+			if after.content.lower().startswith(f"rule {newrulenumber}: "):
+				pass
+			else:
+				await before.delete()
+		else:
+			pass
 
 	@commands.command()
 	@commands.has_role(825911968464502815) 
