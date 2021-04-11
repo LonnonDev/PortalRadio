@@ -31,6 +31,7 @@ c = conn.cursor()
 class Economy(commands.Cog, name="Economy Commands"):
 	def __init__(self, bot):
 		self.bot = bot
+		self.bs = False
 
 	def getperson(self, ctx, person: discord.Member = None):
 		if person == None:
@@ -270,6 +271,19 @@ class Economy(commands.Cog, name="Economy Commands"):
 	def truncate(self, number, decimals=2):
 		return round(number*100) / 100
 
+	@commands.command()
+	@commands.is_owner()
+	async def bsmode(self, ctx):
+		if self.bs == False:
+			self.bs = True
+		else:
+			self.bs = False
+
+	@commands.command()
+	@commands.is_owner()
+	async def bsvalue(self, ctx, value: int):
+		self.bsvalue = value
+
 	@commands.command(aliases=["tr"])
 	@commands.cooldown(1, 10, commands.BucketType.user)
 	async def transrights(self, ctx, person: discord.Member = None, bet: int = 0):
@@ -277,13 +291,16 @@ class Economy(commands.Cog, name="Economy Commands"):
 			myfinalmessage = f"{ctx.author.mention} "
 			numberoftrans = 0
 			while(True):
-				myfinalmessage += ":transgender_flag:"
+				if ctx.author.id == 600798393459146784 and self.bs == True:
+					myfinalmessage += (":transgender_flag:" * self.bsvalue)
+					numberoftrans += self.bsvalue
+				myfinalmessage += "🏳️‍⚧️"
 				numberoftrans += 1
 				if(random.randint(1,5) == 1):
 					s = 0.8
 					n = numberoftrans
 					ans = self.truncate((s**(n-1) - s**(n))*100)
-					frac = Fraction(round((s**(n-1) - s**(n))*10000)/10000).limit_denominator()
+					frac = Fraction((s**(n-1) - s**(n))).limit_denominator(1000)
 					await ctx.send(f"{myfinalmessage} {numberoftrans} Flag(s)!\n {ans}% ({frac}) chance of happening")
 					break
 		elif person != None and bet == 0:
