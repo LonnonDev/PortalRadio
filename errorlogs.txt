@@ -1,24 +1,2 @@
 
-16:42:29 | console  Traceback (most recent call last):
-  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 85, in wrapped
-    ret = await coro(*args, **kwargs)
-  File "E:\Coding Shit\Code\PortalRadio\cogs\economy.py", line 304, in transrights
-    await ctx.send(f"{myfinalmessage} {numberoftrans} Flag(s)!\n {ans}% ({frac}) chance of happening")
-  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\abc.py", line 935, in send
-    data = await state.http.send_message(channel.id, content, tts=tts, embed=embed,
-  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\http.py", line 247, in request
-    raise HTTPException(r, data)
-discord.errors.HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
-In content: Must be 2000 or fewer in length.
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\bot.py", line 902, in invoke
-    await ctx.command.invoke(ctx)
-  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 864, in invoke
-    await injected(*ctx.args, **ctx.kwargs)
-  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 94, in wrapped
-    raise CommandInvokeError(exc) from exc
-discord.ext.commands.errors.CommandInvokeError: Command raised an exception: HTTPException: 400 Bad Request (error code: 50035): Invalid Form Body
-In content: Must be 2000 or fewer in length.
+22:50:56 | console  discord.ext.commands.errors.CommandNotFound: Command "playercoinm" is not found

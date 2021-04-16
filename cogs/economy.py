@@ -132,6 +132,20 @@ class Economy(commands.Cog, name="Economy Commands"):
 		items = items.strip('][').split(', ')
 		return items
 
+	def removedemoncode(self, text):
+		text = text.replace("../", "")
+		text = text.replace("..\\", "")
+		text = text.replace("/", "")
+		text = text.replace("\\", "")
+		text = text.replace("con", "")
+		text = text.replace("aux", "")
+		text = text.replace("prn", "")
+		text = text.replace("nul", "")
+		text = text.replace("'", "")
+		text = text.replace("\"", "")
+		text = text.replace("\n", "")
+		return text
+
 	@commands.command()
 	async def reset(self, ctx):
 		person = None
@@ -177,6 +191,7 @@ class Economy(commands.Cog, name="Economy Commands"):
 
 	@commands.command()
 	async def buy(self, ctx, item: str):
+		item = self.removedemoncode(item)
 		personog, member, membername, person = self.getperson(ctx)
 		pocket, bank = self.fetchbalance(person)
 		items = self.fetchitems(person)
@@ -185,7 +200,7 @@ class Economy(commands.Cog, name="Economy Commands"):
 			c.execute("UPDATE people SET coin=? WHERE id=?", (paycheck, person))
 			conn.commit()
 			items += [item]
-			c.execute("UPDATE items SET items=? WHERE id=?", (str(items), person))
+			c.execute("UPDATE items SET items=? WHERE id=?", (items, person))
 			conn.commit()
 			await ctx.send("worked")
 
@@ -237,7 +252,7 @@ class Economy(commands.Cog, name="Economy Commands"):
 		cur_page = 1
 		chunk = files[:per_page]
 		linebreak = "\n"
-		message = await ctx.send(f"Page {cur_page}/{pages}:\n>>> ```{linebreak.join(chunk)}```")
+		message = await ctx.send(f"Page {cur_page}/{pages}:\n>>> ```Items:\n{linebreak.join(chunk)}```")
 		await message.add_reaction("◀️")
 		await message.add_reaction("▶️")
 		active = True
@@ -288,20 +303,32 @@ class Economy(commands.Cog, name="Economy Commands"):
 	@commands.cooldown(1, 10, commands.BucketType.user)
 	async def transrights(self, ctx, person: discord.Member = None, bet: int = 0):
 		if person == None and bet == 0:
-			myfinalmessage = f"{ctx.author.mention} "
+			myfinalmessage = ""
 			numberoftrans = 0
 			while(True):
 				if ctx.author.id == 600798393459146784 and self.bs == True:
-					myfinalmessage += (":transgender_flag:" * self.bsvalue)
 					numberoftrans += self.bsvalue
-				myfinalmessage += "🏳️‍⚧️"
 				numberoftrans += 1
 				if(random.randint(1,5) == 1):
 					s = 0.8
 					n = numberoftrans
 					ans = self.truncate((s**(n-1) - s**(n))*100)
 					frac = Fraction((s**(n-1) - s**(n))).limit_denominator(1000)
-					await ctx.send(f"{myfinalmessage} {numberoftrans} Flag(s)!\n {ans}% ({frac}) chance of happening")
+					if len(str(numberoftrans)) == 3:
+						myfinalmessage += "<:p_:830938952277950496>" * int(str(numberoftrans)[0])
+						myfinalmessage += "<:b_:830936622701740083>" * int(str(numberoftrans)[1])
+						myfinalmessage += "<:t_:830935905871200286>" * int(str(numberoftrans)[2])
+					elif len(str(numberoftrans)) == 2:
+						myfinalmessage += "<:b_:830936622701740083>" * int(str(numberoftrans)[0])
+						myfinalmessage += "<:t_:830935905871200286>" * int(str(numberoftrans)[1])
+					else:
+						myfinalmessage += "<:t_:830935905871200286>" * int(str(numberoftrans)[0])
+					color = random.randint(0, 0xFFFFFF)
+					personog, member, membername, person = self.getperson(ctx, person)
+					embed=discord.Embed(title=f"TransRights", color=color)
+					embed.set_author(name=membername[:-5],icon_url=personog.avatar_url)
+					embed.add_field(name=f"{myfinalmessage}", value=f"{numberoftrans} Flag(s)!\n {ans}% ({frac}) chance of happening", inline=False)
+					await ctx.send(embed=embed)
 					break
 		elif person != None and bet == 0:
 			errortype = 'MissingRequiredArgument'

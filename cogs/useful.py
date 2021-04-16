@@ -18,6 +18,8 @@ import itertools
 import subprocess
 from discord.utils import get
 
+client = discord.client
+
 try:
 	source = '/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio'
 	os.chdir('/media/Lonnon/CoolDrive/Coding Shit/Code/PortalRadio')
@@ -115,7 +117,13 @@ class Useful(commands.Cog, name="Useful Commands"):
 		output = subprocess.run(['python', '-V'], stdout=subprocess.PIPE).stdout.decode('utf-8')
 		await ctx.send(output)
 
-
+	@commands.command()
+	@commands.is_owner()
+	async def servers(self, ctx):
+		activeservers = self.bot.guilds
+		for guild in activeservers:
+			await ctx.send(guild.name)
+			print(guild.name)
 
 # setup the Cog
 def setup(bot):

@@ -57,20 +57,23 @@ class TasksCog(commands.Cog):
 
 	@commands.Cog.listener()
 	async def on_message(self, ctx):
-		if ctx.channel.id == 809997824585367592:
-			guild = self.bot.get_guild(785241980162408450)
-			ruleschannel = guild.get_channel(809997824585367592)
-			lastmessages = await ruleschannel.history(limit=2).flatten()
-			message = [lastmessages[1].content, lastmessages[0].content]
-			rule1 = message[0].split(" ")
-			oldrulenumber = rule1[1]
-			newrulenumber = int(oldrulenumber.replace(":", "")) + 1
-			if ctx.content.lower().startswith(f"rule {newrulenumber}: "):
-				pass
-			else:
-				await ctx.delete()
+		if ctx.author.id == 593456905754771497 and ctx.channel.id == 809997824585367592:
+			await ctx.delete()
 		else:
-			pass
+			if ctx.channel.id == 809997824585367592:
+				guild = self.bot.get_guild(785241980162408450)
+				ruleschannel = guild.get_channel(809997824585367592)
+				lastmessages = await ruleschannel.history(limit=2).flatten()
+				message = [lastmessages[1].content, lastmessages[0].content]
+				rule1 = message[0].split(" ")
+				oldrulenumber = rule1[1]
+				newrulenumber = int(oldrulenumber.replace(":", "")) + 1
+				if ctx.content.lower().startswith(f"rule {newrulenumber}: "):
+					pass
+				else:
+					await ctx.delete()
+			else:
+				pass
 
 	@commands.Cog.listener()
 	async def on_message_edit(self, before, after):
