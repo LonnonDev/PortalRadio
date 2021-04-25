@@ -146,6 +146,13 @@ class Economy(commands.Cog, name="Economy Commands"):
 		text = text.replace("\n", "")
 		return text
 
+	def turnlistintostring(self, listobj):
+		finalstring = "["
+		for x in listobj:
+			finalstring += f"{x}, "
+		finalstring += "]"
+		return finalstring
+
 	@commands.command()
 	async def reset(self, ctx):
 		person = None
@@ -175,7 +182,6 @@ class Economy(commands.Cog, name="Economy Commands"):
 		pocket, bank = self.fetchbalance(person)
 		amount = 1
 		paycheck = amount + pocket
-		membername = str(ctx.author)
 		emoji = self.emojistype(person) 
 		embed=discord.Embed(name="Portal Gun", color=color)
 		embed.add_field(name="You shot", value=f"{amount} {emoji}", inline=True)
@@ -200,11 +206,13 @@ class Economy(commands.Cog, name="Economy Commands"):
 			c.execute("UPDATE people SET coin=? WHERE id=?", (paycheck, person))
 			conn.commit()
 			items += [item]
+			items = self.turnlistintostring(items)
+			await ctx.send(items)
 			c.execute("UPDATE items SET items=? WHERE id=?", (items, person))
 			conn.commit()
 			await ctx.send("worked")
 
-	@commands.command()
+	@commands.command(aliases=["shop"])
 	async def items(self, ctx):
 		files = [f"Big Chungus Coin: {self.formatitem('bigchungus')}", f"Gaming: {self.formatitem('gaming')}"]
 		per_page = 3 # 10 files per page

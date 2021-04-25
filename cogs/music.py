@@ -86,7 +86,7 @@ class Music(commands.Cog, name="Music Commands"):
 			if ctx.message.author.id == 600798393459146784:
 				self.vc.stop()
 		else:
-			await self.playmusic(ctx, voiceline)
+			await self.vc.stop()
 
 	@commands.command()
 	async def clearqueue(self, ctx):
@@ -222,7 +222,22 @@ class Music(commands.Cog, name="Music Commands"):
 						vc: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=guild)
 						vc.stop()
 		else:
-			await self.playmusic(ctx, voiceline)
+			try:
+				self.playing.cancel()
+			except:
+				pass
+			try:
+				self.vc.stop()
+			except:
+				voice_channel = ctx.author.voice.channel 
+				channel = voice_channel.name
+				guild = ctx.guild
+				try:
+					vc = await voice_channel.connect()
+				except:
+					guild = ctx.guild
+					vc: discord.VoiceClient = discord.utils.get(self.bot.voice_clients, guild=guild)
+					vc.stop()
 
 	def enabledordisabled(self, var):
 		if var == True:

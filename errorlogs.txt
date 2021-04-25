@@ -1,2 +1,2 @@
 
-22:50:56 | console  discord.ext.commands.errors.CommandNotFound: Command "playercoinm" is not found
+23:04:36 | console  discord.ext.commands.errors.CommandNotFound: Command "queue" is not found

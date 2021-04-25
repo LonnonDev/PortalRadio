@@ -121,9 +121,10 @@ class Useful(commands.Cog, name="Useful Commands"):
 	@commands.is_owner()
 	async def servers(self, ctx):
 		activeservers = self.bot.guilds
+		finalmessage = ""
 		for guild in activeservers:
-			await ctx.send(guild.name)
-			print(guild.name)
+			finalmessage += f"{guild.id}, {guild.name}\n"
+		await ctx.send(finalmessage)
 
 # setup the Cog
 def setup(bot):
