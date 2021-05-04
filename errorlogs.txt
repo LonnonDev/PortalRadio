@@ -1,2 +1,20 @@
 
-23:04:36 | console  discord.ext.commands.errors.CommandNotFound: Command "queue" is not found
+07:23:26 | console  Traceback (most recent call last):
+  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 85, in wrapped
+    ret = await coro(*args, **kwargs)
+  File "E:\Coding Shit\Code\PortalRadio\cogs\music.py", line 133, in play
+    await self.playmusic(ctx, voiceline)
+  File "E:\Coding Shit\Code\PortalRadio\cogs\music.py", line 68, in playmusic
+    voice_channel = ctx.author.voice.channel
+AttributeError: 'NoneType' object has no attribute 'channel'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\bot.py", line 902, in invoke
+    await ctx.command.invoke(ctx)
+  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 864, in invoke
+    await injected(*ctx.args, **ctx.kwargs)
+  File "C:\Users\xxl3m\AppData\Local\Programs\Python\Python39\lib\site-packages\discord\ext\commands\core.py", line 94, in wrapped
+    raise CommandInvokeError(exc) from exc
+discord.ext.commands.errors.CommandInvokeError: Command raised an exception: AttributeError: 'NoneType' object has no attribute 'channel'

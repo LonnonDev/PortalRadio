@@ -14,7 +14,6 @@ from discord.ext.commands.cooldowns import BucketType
 from os import listdir
 import datetime
 import asyncio
-# import the token
 from config import *
 
 try:
